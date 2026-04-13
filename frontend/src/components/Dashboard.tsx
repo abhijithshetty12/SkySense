@@ -55,7 +55,7 @@ export function Dashboard() {
     return () => window.removeEventListener('weather-city-changed', handleCityChange)
   }, [weather, forecast, prediction])
 
-  const generateTabs = (activeTab: string, setActiveTab: (value: string) => void, tabValues: string[], tabLabels: string[], tabStyles: string[]) => {
+  const generateTabs = (activeTab: "overview" | "forecast" | "ai", setActiveTab: React.Dispatch<React.SetStateAction<"overview" | "forecast" | "ai">>, tabValues: ("overview" | "forecast" | "ai")[], tabLabels: string[], tabStyles: string[]) => {
   return tabValues.map((value, index) => (
     <TabsTrigger 
       key={value}
@@ -88,7 +88,7 @@ export function Dashboard() {
 
       {/* Top Nav */}
       <header
-        className="sticky top-0 z-40 flex items-center gap-5 px-4 sm:px-6 py-4 sm:py-3 overflow-visible"
+        className="sticky top-0 z-40 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-3 px-4 py-3 sm:px-6 sm:py-2.5 overflow-visible"
         style={{ 
           background: "var(--card)", 
           backdropFilter: "blur(24px) saturate(180%)",
@@ -97,46 +97,50 @@ export function Dashboard() {
         }}
       >
         {/* Logo */}
-        <div className="flex items-center gap-2 shrink-0 mr-2">
+        <div className="flex items-center gap-2 self-start sm:self-center">
           <img 
             src="/SkySense-Icon.jpg" 
             alt="SkySense" 
-            className="w-7 h-7 rounded-lg object-cover"
+            className="w-8 h-8 sm:w-7 sm:h-7 rounded-lg object-cover"
             style={{ background: "rgba(192,192,192,0.15)" }}
           />
-          <span className="font-semibold text-sm tracking-tight text-foreground">
+          <span className="font-semibold text-base sm:text-sm tracking-tight text-foreground">
             SkySense
           </span>
         </div>
 
-        <Separator orientation="vertical" className="h-5" />
+        <Separator orientation="vertical" className="h-5 hidden sm:block mx-2" />
 
-        <SearchBar isLoading={isLoading} />
+        <div className="w-full sm:flex-1 sm:ml-auto">
+          <SearchBar isLoading={isLoading} />
+        </div>
 
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={handleRefresh}
-          disabled={isLoading}
-          className="shrink-0"
-        >
-          <RefreshCw
-            className={cn("w-4 h-4", isLoading ? "animate-spin" : "")}
-          />
-        </Button>
+        <div className="flex gap-1.5 mt-1 sm:mt-0 sm:gap-1 sm:ml-auto justify-center">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleRefresh}
+            disabled={isLoading}
+            className="shrink-0 h-9 w-9"
+          >
+            <RefreshCw
+              className={cn("w-4 h-4", isLoading ? "animate-spin" : "")}
+            />
+          </Button>
 
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-          className="shrink-0"
-        >
-          {theme === "dark" ? (
-            <Sun className="w-4 h-4" />
-          ) : (
-            <Moon className="w-4 h-4" />
-          )}
-        </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            className="shrink-0 h-9 w-9"
+          >
+            {theme === "dark" ? (
+              <Sun className="w-4 h-4" />
+            ) : (
+              <Moon className="w-4 h-4" />
+            )}
+          </Button>
+        </div>
       </header>
 
       {/* Main */}
