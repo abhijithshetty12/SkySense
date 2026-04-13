@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1E293B"/>
+      <stop offset="100%" stop-color="#0F172A"/>
+    </linearGradient>
+    <linearGradient id="cloud" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#E2E8F0"/>
+      <stop offset="100%" stop-color="#94A3B8"/>
+    </linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <rect width="64" height="64" rx="12" fill="url(#bg)"/>
+  <g filter="url(#glow)">
+    <path d="M18 38c0-5.5 4.5-10 10-10 3.3 0 6.3 1.6 8.1 4.1l.4.5c2.2 3 3.5 6.8 3.5 10.9C40 50.2 35.5 55 30 55s-10-4.8-10-10.5c0-.5 0-1 .1-1.5h-.1z" fill="url(#cloud)"/>
+  </g>
+  <circle cx="38" cy="26" r="6" fill="#FCD34D" filter="url(#glow)"/>
+  <path d="M38 20v-4M38 36v-4M30 26l-3-3M46 26l3-3M32 22l-2.5-4.5M44 22l2.5-4.5" stroke="#FCD34D" stroke-width="2" stroke-linecap="round" filter="url(#glow)"/>
+</svg>
