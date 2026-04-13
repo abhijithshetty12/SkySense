@@ -2,7 +2,7 @@
 
 <div align="center">
 
-  <img src="https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black" />
+  <img src="https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=black" />
   <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" />
   <img src="https://img.shields.io/badge/TailwindCSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" />
   <img src="https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white" />
@@ -84,12 +84,25 @@ pip install -r requirements.txt
 uvicorn main:app --reload --port 8000
 ```
 
-### Frontend
+### Frontend (Local)
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
+
+### Vercel Deployment
+```bash
+npm install -g vercel
+vercel --prod
+```
+**Required Environment Variable:**
+- `VITE_OPENWEATHER_KEY` (get free at https://openweathermap.org/api)
+
+**vercel.json configured for:**
+- Frontend-only deployment to `/frontend/dist`
+- Framework: null (raw Vite)
+- Backend excluded (deploy separately if needed)
 
 ---
 
@@ -113,7 +126,7 @@ SkySense/
 ## 🔧 Tech Stack
 
 ### Frontend
-- React 19 + Vite
+- React 18 + Vite (Vercel compatible)
 - TypeScript
 - Tailwind CSS + shadcn/ui
 - Zustand (Global State)
