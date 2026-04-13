@@ -28,6 +28,52 @@ SkySense is a **predictive weather intelligence tool**. It combines **real-time 
 - ⚡ **Fast Development** (React 19 + Vite)
 ---
 
+# 📸 Interface Previews
+
+<details open>
+<summary><b>View Light Mode</b></summary>
+<br />
+
+<p align="center">
+  <img src="./screenshots/dashboard-overview-light.png" width="800" alt="SkySense Light Overview" />
+  <br />
+  <em>Main Dashboard: Real-time weather metrics with glassmorphic cards.</em>
+</p>
+
+<p align="center">
+  <img src="./screenshots/ai-prediction-light.png" width="800" alt="SkySense AI Prediction Light" />
+  <br />
+  <em>AI Predictions: Ensemble scenarios using RandomForest ML.</em>
+</p>
+
+</details>
+
+<details>
+<summary><b>View Dark Mode</b></summary>
+<br />
+
+<p align="center">
+  <img src="./screenshots/dashboard-overview-dark.png" width="800" alt="SkySense Dark Overview" />
+  <br />
+  <em>Dark Mode: High-contrast liquid glass UI for night viewing.</em>
+</p>
+
+<p align="center">
+  <img src="./screenshots/five-day-forecast-dark.png" width="800" alt="SkySense 5-Day Forecast" />
+  <br />
+  <em>5-Day Forecast: Clean, minimal layout for upcoming weather trends.</em>
+</p>
+
+<p align="center">
+  <img src="./screenshots/ai-prediction-dark.png" width="800" alt="SkySense AI Prediction Dark" />
+  <br />
+  <em>Advanced ML analytics and feature importance visualization.</em>
+</p>
+
+</details>
+
+---
+
 ## 🛠 Quick Start
 
 ### Backend (Optional for ML)
@@ -94,12 +140,6 @@ SkySense/
 - [ ] **Hyper-local Alerts:** Push notifications for sudden weather shifts.  
 - [ ] **Satellite Overlays:** Mapbox integration for precipitation visualization.  
 - [ ] **Historical Trends:** Compare current weather with 10-year averages.  
-
----
-
-## 📄 License
-
-MIT — Free to use and fork.
 
 ---
 
