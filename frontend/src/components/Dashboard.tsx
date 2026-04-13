@@ -18,6 +18,7 @@ import { MLPrediction } from "@/components/weather/MLPrediction"
 import { useWeatherStore } from "@/store/weatherStore"
 import { useCurrentWeather, useForecast, useMLPrediction } from "@/hooks/useWeatherQuery"
 import { useTheme } from "@/components/theme-provider"
+import { cn } from "@/lib/utils";
 
 export function Dashboard() {
   const { city, unit } = useWeatherStore()
@@ -29,7 +30,7 @@ export function Dashboard() {
 
   const isLoading = weather.isLoading
 
-  const [activeTab, setActiveTab] = useState("overview")
+  const [activeTab, setActiveTab] = useState<"overview" | "forecast" | "ai">("overview")
 
   // Show error toasts
   useEffect(() => {
@@ -54,6 +55,18 @@ export function Dashboard() {
     return () => window.removeEventListener('weather-city-changed', handleCityChange)
   }, [weather, forecast, prediction])
 
+  const generateTabs = (activeTab: string, setActiveTab: (value: string) => void, tabValues: string[], tabLabels: string[], tabStyles: string[]) => {
+  return tabValues.map((value, index) => (
+    <TabsTrigger 
+      key={value}
+      value={value} 
+      className={`h-9 sm:h-10 md:h-auto flex-1 py-1.5 data-[state=active]:shadow-[0_0_0_2px_var(--primary)] ${activeTab === value ? "bg-primary border-primary shadow-primary" : ""} ${tabStyles[index]}`}
+    >
+      {tabLabels[index]}
+    </TabsTrigger>
+  ));
+};
+
   const handleRefresh = async () => {
     await Promise.all([
       weather.refetch(),
@@ -65,6 +78,7 @@ export function Dashboard() {
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: "var(--background)" }}>
+
       {/* Liquid background orbs */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none" style={{ zIndex: 0 }}>
         <div className="absolute -top-40 -right-40 w-96 h-96 rounded-full" style={{ background: "radial-gradient(circle, var(--primary), transparent 70%)", opacity: 0.12, filter: "blur(40px)", animation: "float 8s ease-in-out infinite" }} />
@@ -74,7 +88,7 @@ export function Dashboard() {
 
       {/* Top Nav */}
       <header
-        className="sticky top-0 z-40 flex items-center gap-4 px-6 py-3 overflow-visible"
+        className="sticky top-0 z-40 flex items-center gap-5 px-4 sm:px-6 py-4 sm:py-3 overflow-visible"
         style={{ 
           background: "var(--card)", 
           backdropFilter: "blur(24px) saturate(180%)",
@@ -101,84 +115,52 @@ export function Dashboard() {
 
         <Button
           variant="ghost"
-          size="icon-sm"
+          size="icon"
           onClick={handleRefresh}
           disabled={isLoading}
           className="shrink-0"
         >
           <RefreshCw
-            style={{ width: 15, height: 15 }}
-            className={isLoading ? "animate-spin" : ""}
+            className={cn("w-4 h-4", isLoading ? "animate-spin" : "")}
           />
         </Button>
 
         <Button
           variant="ghost"
-          size="icon-sm"
+          size="icon"
           onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
           className="shrink-0"
         >
           {theme === "dark" ? (
-            <Sun style={{ width: 15, height: 15 }} />
+            <Sun className="w-4 h-4" />
           ) : (
-            <Moon style={{ width: 15, height: 15 }} />
+            <Moon className="w-4 h-4" />
           )}
         </Button>
       </header>
 
       {/* Main */}
       <main className="flex-1 overflow-auto">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 space-y-6">
+        <div className="max-w-6xl mx-auto px-3 sm:px-4 md:px-6 py-6 space-y-6 sm:space-y-7">
 
           {/* Page heading */}
           <div className="flex items-center gap-2 text-muted-foreground">
-            <LayoutDashboard style={{ width: 14, height: 14 }} />
+            <LayoutDashboard className="w-3.5 h-3.5" />
             <span className="text-xs label-meta">Weather Dashboard</span>
           </div>
 
           {/* Standalone toggle header */}
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="w-full mt-1 md:mt-0 flex flex-col md:flex-row justify-center md:justify-start gap-0.5 md:gap-0 text-xs px-1 py-0.5 md:py-1 rounded-sm md:rounded-none" style={{ background: "var(--card)", backdropFilter: "blur(16px)", border: "1px solid var(--border)" }}>
-              <TabsTrigger 
-                value="overview" 
-                className="h-6 md:h-auto flex-1 py-1"
-                style={{ 
-                  background: activeTab === "overview" ? "var(--primary)" : "transparent",
-                  border: activeTab === "overview" ? "1px solid var(--primary)" : "1px solid transparent",
-                  boxShadow: activeTab === "overview" ? "0 0 20px var(--primary)" : "none"
-                }}
-              >
-                Overview
-              </TabsTrigger>
-              <TabsTrigger 
-                value="forecast"
-                className="h-6 md:h-auto flex-1 py-1"
-                style={{ 
-                  background: activeTab === "forecast" ? "var(--primary)" : "transparent",
-                  border: activeTab === "forecast" ? "1px solid var(--primary)" : "1px solid transparent",
-                  boxShadow: activeTab === "forecast" ? "0 0 20px var(--primary)" : "none"
-                }}
-              >
-                Forecast
-              </TabsTrigger>
-<TabsTrigger 
-                value="ai" 
-                className="h-6 md:h-auto flex-1 py-1"
-                style={{ 
-                  background: activeTab === "ai" ? "var(--primary)" : "transparent",
-                  border: activeTab === "ai" ? "1px solid var(--primary)" : "1px solid transparent",
-                  boxShadow: activeTab === "ai" ? "0 0 20px var(--primary)" : "none"
-                }}
-              >
-                AI Prediction
-              </TabsTrigger>
+            <TabsList className="w-full mt-1 md:mt-0 flex flex-col md:flex-row justify-center md:justify-start gap-1 sm:gap-0.5 text-sm sm:text-xs px-2 sm:px-1 py-1.5 sm:py-1 rounded-md sm:rounded-none" style={{ background: "var(--card)", backdropFilter: "blur(16px)", border: "1px solid var(--border)" }}>
+              {generateTabs(activeTab, setActiveTab, ["overview", "forecast", "ai"], ["Overview", "Forecast", "AI Prediction"], ["", "", ""])}
+
             </TabsList>
           </Tabs>
 
           {/* Static tab contents - show/hide via activeTab */}
           {activeTab === "overview" && (
             <div className="space-y-5 mt-0">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-3 lg:gap-5">
                 {/* Left: current weather */}
                 <div className="lg:col-span-1">
                   <CurrentWeather
@@ -214,7 +196,7 @@ export function Dashboard() {
                 </h3>
                 <p className="text-xs text-muted-foreground mb-4">
                   Daily weather overview for{" "}
-                  <span className="text-foreground">{city}</span>
+                  <span className="text-foreground font-medium">{city}</span>
                 </p>
                 <ForecastList
                   days={forecast.data?.daily}
@@ -241,15 +223,13 @@ export function Dashboard() {
               />
             </div>
           )}
-
-
         </div>
       </main>
 
       {/* Footer */}
-      <footer className="py-3 px-6" style={{ background: "var(--card)", backdropFilter: "blur(16px)", borderTop: "1px solid var(--border)" }}>
+      <footer className="py-4 sm:py-3 px-4 sm:px-6" style={{ background: "var(--card)", backdropFilter: "blur(16px)", borderTop: "1px solid var(--border)" }}>
         <p className="text-xs text-muted-foreground text-center">
-          © 2026 SkySense. All rights reserved.
+          © 2024 SkySense. All rights reserved.
         </p>
       </footer>
     </div>
