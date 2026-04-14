@@ -233,7 +233,7 @@ export function Dashboard() {
       {/* Footer */}
       <footer className="py-4 sm:py-3 px-4 sm:px-6" style={{ background: "var(--card)", backdropFilter: "blur(16px)", borderTop: "1px solid var(--border)" }}>
         <p className="text-xs text-muted-foreground text-center">
-          © 2024 SkySense. All rights reserved.
+          © 2026 SkySense. All rights reserved.
         </p>
       </footer>
     </div>
