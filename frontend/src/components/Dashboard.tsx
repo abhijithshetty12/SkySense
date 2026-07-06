@@ -18,7 +18,7 @@ import { MLPrediction } from "@/components/weather/MLPrediction"
 import { useWeatherStore } from "@/store/weatherStore"
 import { useCurrentWeather, useForecast, useMLPrediction } from "@/hooks/useWeatherQuery"
 import { useTheme } from "@/components/theme-provider"
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 export function Dashboard() {
   const { city, unit } = useWeatherStore()
@@ -32,6 +32,7 @@ export function Dashboard() {
 
   const [activeTab, setActiveTab] = useState<"overview" | "forecast" | "ai">("overview")
 
+  // Show error toasts
   useEffect(() => {
     if (weather.error) {
       const msg =
@@ -42,6 +43,7 @@ export function Dashboard() {
     }
   }, [weather.error])
 
+  // Listen for city changes from SearchBar
   useEffect(() => {
     const handleCityChange = () => {
       weather.refetch()
@@ -53,6 +55,18 @@ export function Dashboard() {
     return () => window.removeEventListener('weather-city-changed', handleCityChange)
   }, [weather, forecast, prediction])
 
+  const generateTabs = (activeTab: "overview" | "forecast" | "ai", setActiveTab: React.Dispatch<React.SetStateAction<"overview" | "forecast" | "ai">>, tabValues: ("overview" | "forecast" | "ai")[], tabLabels: string[], tabStyles: string[]) => {
+  return tabValues.map((value, index) => (
+    <TabsTrigger 
+      key={value}
+      value={value} 
+      className={`h-9 sm:h-10 md:h-auto flex-1 py-1.5 data-[state=active]:shadow-[0_0_0_2px_var(--primary)] ${activeTab === value ? "bg-primary border-primary shadow-primary" : ""} ${tabStyles[index]}`}
+    >
+      {tabLabels[index]}
+    </TabsTrigger>
+  ));
+};
+
   const handleRefresh = async () => {
     await Promise.all([
       weather.refetch(),
@@ -63,51 +77,54 @@ export function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col antialiased selection:bg-primary/30 overflow-x-hidden relative" style={{ background: "var(--background)" }}>
-      
-      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
-        <div className="absolute -top-40 -right-40 w-72 h-72 sm:w-96 sm:h-96 rounded-full" style={{ background: "radial-gradient(circle, var(--primary), transparent 70%)", opacity: 0.12, filter: "blur(40px)", animation: "float 8s ease-in-out infinite" }} />
-        <div className="absolute top-1/3 -left-32 w-60 h-60 sm:w-72 sm:h-72 rounded-full" style={{ background: "radial-gradient(circle, var(--accent), transparent 70%)", opacity: 0.1, filter: "blur(32px)", animation: "float 10s ease-in-out infinite reverse" }} />
-        <div className="absolute bottom-20 right-1/4 w-52 h-52 sm:w-64 sm:h-64 rounded-full" style={{ background: "radial-gradient(circle, var(--cyan), transparent 70%)", opacity: 0.08, filter: "blur(28px)", animation: "float 12s ease-in-out infinite" }} />
+    <div className="min-h-screen flex flex-col" style={{ background: "var(--background)" }}>
+
+      {/* Liquid background orbs */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none" style={{ zIndex: 0 }}>
+        <div className="absolute -top-40 -right-40 w-96 h-96 rounded-full" style={{ background: "radial-gradient(circle, var(--primary), transparent 70%)", opacity: 0.12, filter: "blur(40px)", animation: "float 8s ease-in-out infinite" }} />
+        <div className="absolute top-1/3 -left-32 w-72 h-72 rounded-full" style={{ background: "radial-gradient(circle, var(--accent), transparent 70%)", opacity: 0.1, filter: "blur(32px)", animation: "float 10s ease-in-out infinite reverse" }} />
+        <div className="absolute bottom-20 right-1/4 w-64 h-64 rounded-full" style={{ background: "radial-gradient(circle, var(--cyan), transparent 70%)", opacity: 0.08, filter: "blur(28px)", animation: "float 12s ease-in-out infinite" }} />
       </div>
 
+      {/* Top Nav */}
       <header
-        className="sticky top-0 z-50 flex items-center justify-between gap-2 px-3 py-2.5 sm:px-6 sm:py-3"
+        className="sticky top-0 z-40 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-3 px-4 py-3 sm:px-6 sm:py-2.5 overflow-visible"
         style={{ 
           background: "var(--card)", 
           backdropFilter: "blur(24px) saturate(180%)",
           borderBottom: "1px solid var(--border)",
-          boxShadow: "0 4px 30px rgba(0,0,0,0.03), inset 0 1px 0 rgba(255,255,255,0.05)"
+          boxShadow: "0 4px 30px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.05)"
         }}
       >
-        <div className="flex items-center gap-2 shrink-0">
+        {/* Logo */}
+        <div className="flex items-center gap-2 self-start sm:self-center">
           <img 
             src="/SkySense-Icon.jpg" 
             alt="SkySense" 
-            className="w-7 h-7 sm:w-7 sm:h-7 rounded-lg object-cover"
+            className="w-8 h-8 sm:w-7 sm:h-7 rounded-lg object-cover"
             style={{ background: "rgba(192,192,192,0.15)" }}
           />
-          <span className="font-bold text-sm tracking-tight text-foreground hidden xs:block">
+          <span className="font-semibold text-base sm:text-sm tracking-tight text-foreground">
             SkySense
           </span>
         </div>
 
-        <Separator orientation="vertical" className="h-5 hidden sm:block mx-2 bg-white/[0.08]" />
+        <Separator orientation="vertical" className="h-5 hidden sm:block mx-2" />
 
-        <div className="flex-1 max-w-md sm:max-w-xl mx-1.5 sm:mx-0">
+        <div className="w-full sm:flex-1 sm:ml-auto">
           <SearchBar isLoading={isLoading} />
         </div>
 
-        <div className="flex items-center gap-1 shrink-0">
+        <div className="flex gap-1.5 mt-1 sm:mt-0 sm:gap-1 sm:ml-auto justify-center">
           <Button
             variant="ghost"
             size="icon"
             onClick={handleRefresh}
             disabled={isLoading}
-            className="h-8 w-8 sm:h-9 sm:w-9 rounded-lg"
+            className="shrink-0 h-9 w-9"
           >
             <RefreshCw
-              className={cn("w-3.5 h-3.5 sm:w-4 sm:h-4", isLoading ? "animate-spin" : "")}
+              className={cn("w-4 h-4", isLoading ? "animate-spin" : "")}
             />
           </Button>
 
@@ -115,65 +132,40 @@ export function Dashboard() {
             variant="ghost"
             size="icon"
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            className="h-8 w-8 sm:h-9 sm:w-9 rounded-lg"
+            className="shrink-0 h-9 w-9"
           >
             {theme === "dark" ? (
-              <Sun className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              <Sun className="w-4 h-4" />
             ) : (
-              <Moon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              <Moon className="w-4 h-4" />
             )}
           </Button>
         </div>
       </header>
 
-      <main className="flex-1 relative z-10 w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-4 sm:space-y-6">
-        
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 sm:pb-0">
-          <div className="space-y-0.5">
-            <div className="flex items-center gap-1.5 text-muted-foreground">
-              <LayoutDashboard className="w-3.5 h-3.5 text-primary" />
-              <span className="text-[10px] uppercase tracking-widest font-bold label-meta">Weather Dashboard</span>
-            </div>
-            <h1 className="text-xl sm:text-2xl font-black tracking-tight text-foreground">
-              Analytics Overview
-            </h1>
+      {/* Main */}
+      <main className="flex-1 overflow-auto">
+        <div className="max-w-6xl mx-auto px-3 sm:px-4 md:px-6 py-6 space-y-6 sm:space-y-7">
+
+          {/* Page heading */}
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <LayoutDashboard className="w-3.5 h-3.5" />
+            <span className="text-xs label-meta">Weather Dashboard</span>
           </div>
 
-          <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)} className="w-full sm:w-auto">
-            <TabsList 
-              className="grid grid-cols-3 w-full sm:w-[360px] p-1 text-xs rounded-xl h-10 sm:h-11" 
-              style={{ 
-                background: "var(--card)", 
-                backdropFilter: "blur(16px)", 
-                border: "1px solid var(--border)" 
-              }}
-            >
-              <TabsTrigger 
-                value="overview"
-                className="rounded-lg text-[11px] sm:text-xs font-bold tracking-wide transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md"
-              >
-                Overview
-              </TabsTrigger>
-              <TabsTrigger 
-                value="forecast"
-                className="rounded-lg text-[11px] sm:text-xs font-bold tracking-wide transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md"
-              >
-                Forecast
-              </TabsTrigger>
-              <TabsTrigger 
-                value="ai"
-                className="rounded-lg text-[11px] sm:text-xs font-bold tracking-wide transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md"
-              >
-                AI Prediction
-              </TabsTrigger>
+          {/* Standalone toggle header */}
+          <Tabs value={activeTab} onValueChange={setActiveTab}>
+            <TabsList className="w-full mt-1 md:mt-0 flex flex-col md:flex-row justify-center md:justify-start gap-1 sm:gap-0.5 text-sm sm:text-xs px-2 sm:px-1 py-1.5 sm:py-1 rounded-md sm:rounded-none" style={{ background: "var(--card)", backdropFilter: "blur(16px)", border: "1px solid var(--border)" }}>
+              {generateTabs(activeTab, setActiveTab, ["overview", "forecast", "ai"], ["Overview", "Forecast", "AI Prediction"], ["", "", ""])}
+
             </TabsList>
           </Tabs>
-        </div>
 
-        <div className="w-full transition-all duration-300 outline-none">
+          {/* Static tab contents - show/hide via activeTab */}
           {activeTab === "overview" && (
-            <div className="space-y-4 sm:space-y-6">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-5 items-start">
+            <div className="space-y-5 mt-0">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-3 lg:gap-5">
+                {/* Left: current weather */}
                 <div className="lg:col-span-1">
                   <CurrentWeather
                     data={weather.data}
@@ -181,6 +173,7 @@ export function Dashboard() {
                     isLoading={isLoading}
                   />
                 </div>
+                {/* Right: stats */}
                 <div className="lg:col-span-2">
                   <WeatherStats
                     data={weather.data}
@@ -190,28 +183,25 @@ export function Dashboard() {
                 </div>
               </div>
 
-              <div className="p-3.5 sm:p-6 rounded-2xl border border-white/[0.04] bg-white/[0.01] backdrop-blur-xl shadow-xl shadow-black/[0.02] overflow-hidden">
-                <WeatherChart
-                  data={forecast.data?.hourly}
-                  unit={unit}
-                  isLoading={forecast.isLoading}
-                />
-              </div>
+              {/* Chart */}
+              <WeatherChart
+                data={forecast.data?.hourly}
+                unit={unit}
+                isLoading={forecast.isLoading}
+              />
             </div>
           )}
 
           {activeTab === "forecast" && (
-            <div className="space-y-4 sm:space-y-6">
-              <div className="p-4 sm:p-6 rounded-2xl border border-white/[0.04] bg-white/[0.01] backdrop-blur-xl shadow-xl shadow-black/[0.02]">
-                <div className="mb-4">
-                  <h3 className="text-sm sm:text-base font-bold text-foreground tracking-tight">
-                    5-Day Forecast
-                  </h3>
-                  <p className="text-xs text-muted-foreground mt-0.5">
-                    Daily weather overview for{" "}
-                    <span className="text-foreground font-semibold">{city}</span>
-                  </p>
-                </div>
+            <div className="space-y-5 mt-0">
+              <div>
+                <h3 className="text-sm font-semibold text-foreground mb-1">
+                  5-Day Forecast
+                </h3>
+                <p className="text-xs text-muted-foreground mb-4">
+                  Daily weather overview for{" "}
+                  <span className="text-foreground font-medium">{city}</span>
+                </p>
                 <ForecastList
                   days={forecast.data?.daily}
                   unit={unit}
@@ -219,18 +209,17 @@ export function Dashboard() {
                 />
               </div>
 
-              <div className="p-3.5 sm:p-6 rounded-2xl border border-white/[0.04] bg-white/[0.01] backdrop-blur-xl shadow-xl shadow-black/[0.02] overflow-hidden">
-                <WeatherChart
-                  data={forecast.data?.hourly}
-                  unit={unit}
-                  isLoading={forecast.isLoading}
-                />
-              </div>
+              {/* Chart in forecast tab too */}
+              <WeatherChart
+                data={forecast.data?.hourly}
+                unit={unit}
+                isLoading={forecast.isLoading}
+              />
             </div>
           )}
 
           {activeTab === "ai" && (
-            <div className="rounded-2xl border border-white/[0.04] bg-white/[0.01] backdrop-blur-xl shadow-xl shadow-black/[0.02] overflow-hidden">
+            <div className="mt-0">
               <MLPrediction
                 data={prediction.data}
                 unit={unit}
@@ -241,8 +230,9 @@ export function Dashboard() {
         </div>
       </main>
 
-      <footer className="mt-auto border-t py-3.5 px-4 sm:px-6" style={{ background: "var(--card)", backdropFilter: "blur(16px)", borderTop: "1px solid var(--border)" }}>
-        <p className="text-[10px] sm:text-xs text-muted-foreground text-center tracking-wide">
+      {/* Footer */}
+      <footer className="py-4 sm:py-3 px-4 sm:px-6" style={{ background: "var(--card)", backdropFilter: "blur(16px)", borderTop: "1px solid var(--border)" }}>
+        <p className="text-xs text-muted-foreground text-center">
           © 2026 SkySense. All rights reserved.
         </p>
       </footer>
