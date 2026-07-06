@@ -5,7 +5,6 @@ import {
   RefreshCw,
   Sun,
   Moon,
-  CloudSun,
 } from "lucide-react"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
@@ -30,11 +29,15 @@ export function Dashboard() {
   const prediction = useMLPrediction(unit)
 
   const isLoading = weather.isLoading
+
   const [activeTab, setActiveTab] = useState<"overview" | "forecast" | "ai">("overview")
 
   useEffect(() => {
     if (weather.error) {
-      const msg = weather.error instanceof Error ? weather.error.message : "Failed to fetch weather"
+      const msg =
+        weather.error instanceof Error
+          ? weather.error.message
+          : "Failed to fetch weather"
       toast.error(`Weather error: ${msg}`)
     }
   }, [weather.error])
@@ -60,84 +63,108 @@ export function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-950 text-slate-100 antialiased selection:bg-primary/30 overflow-x-hidden relative">
-      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        <div className="absolute top-[-10%] right-[-10%] w-[300px] h-[300px] sm:w-[600px] sm:h-[600px] bg-blue-600/[0.08] dark:bg-blue-500/[0.03] rounded-full blur-[80px] sm:blur-[120px] animate-pulse" style={{ animationDuration: '8s' }} />
-        <div className="absolute top-[30%] left-[-10%] w-[250px] h-[250px] sm:w-[400px] sm:h-[400px] bg-purple-600/[0.06] dark:bg-purple-500/[0.02] rounded-full blur-[70px] sm:blur-[100px] animate-pulse" style={{ animationDuration: '12s' }} />
-        <div className="absolute bottom-[-5%] right-[15%] w-[300px] h-[300px] sm:w-[450px] sm:h-[450px] bg-sky-500/[0.06] dark:bg-sky-500/[0.02] rounded-full blur-[90px] sm:blur-[130px]" />
+    <div className="min-h-screen flex flex-col antialiased selection:bg-primary/30 overflow-x-hidden relative" style={{ background: "var(--background)" }}>
+      
+      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <div className="absolute -top-40 -right-40 w-72 h-72 sm:w-96 sm:h-96 rounded-full" style={{ background: "radial-gradient(circle, var(--primary), transparent 70%)", opacity: 0.12, filter: "blur(40px)", animation: "float 8s ease-in-out infinite" }} />
+        <div className="absolute top-1/3 -left-32 w-60 h-60 sm:w-72 sm:h-72 rounded-full" style={{ background: "radial-gradient(circle, var(--accent), transparent 70%)", opacity: 0.1, filter: "blur(32px)", animation: "float 10s ease-in-out infinite reverse" }} />
+        <div className="absolute bottom-20 right-1/4 w-52 h-52 sm:w-64 sm:h-64 rounded-full" style={{ background: "radial-gradient(circle, var(--cyan), transparent 70%)", opacity: 0.08, filter: "blur(28px)", animation: "float 12s ease-in-out infinite" }} />
       </div>
 
-      <header className="sticky top-0 z-50 w-full border-b border-white/[0.06] bg-slate-950/40 backdrop-blur-xl supports-[backdrop-filter]:bg-slate-950/20 transition-all duration-300">
-        <div className="max-w-7xl mx-auto px-3 h-14 sm:h-16 sm:px-6 lg:px-8 flex items-center justify-between gap-2.5 sm:gap-4">
-          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-            <div className="relative flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl bg-gradient-to-br from-blue-500/10 to-indigo-500/10 border border-white/[0.08] shadow-[0_0_20px_rgba(59,130,246,0.1)]">
-              <CloudSun className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400" />
-            </div>
-            <span className="font-bold text-base sm:text-lg tracking-tight bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent hidden xs:block">
-              SkySense
-            </span>
-          </div>
+      <header
+        className="sticky top-0 z-50 flex items-center justify-between gap-2 px-3 py-2.5 sm:px-6 sm:py-3"
+        style={{ 
+          background: "var(--card)", 
+          backdropFilter: "blur(24px) saturate(180%)",
+          borderBottom: "1px solid var(--border)",
+          boxShadow: "0 4px 30px rgba(0,0,0,0.03), inset 0 1px 0 rgba(255,255,255,0.05)"
+        }}
+      >
+        <div className="flex items-center gap-2 shrink-0">
+          <img 
+            src="/SkySense-Icon.jpg" 
+            alt="SkySense" 
+            className="w-7 h-7 sm:w-7 sm:h-7 rounded-lg object-cover"
+            style={{ background: "rgba(192,192,192,0.15)" }}
+          />
+          <span className="font-bold text-sm tracking-tight text-foreground hidden xs:block">
+            SkySense
+          </span>
+        </div>
 
-          <Separator orientation="vertical" className="h-5 bg-white/[0.08] hidden sm:block" />
+        <Separator orientation="vertical" className="h-5 hidden sm:block mx-2 bg-white/[0.08]" />
 
-          <div className="flex-1 max-w-md sm:max-w-xl mx-1 sm:mx-0">
-            <SearchBar isLoading={isLoading} />
-          </div>
+        <div className="flex-1 max-w-md sm:max-w-xl mx-1.5 sm:mx-0">
+          <SearchBar isLoading={isLoading} />
+        </div>
 
-          <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleRefresh}
-              disabled={isLoading}
-              className="h-8 w-8 sm:h-9 sm:w-9 rounded-lg sm:rounded-xl bg-white/[0.02] border border-white/[0.04] hover:bg-white/[0.06] hover:border-white/[0.08] transition-all duration-200 text-slate-300 hover:text-white"
-            >
-              <RefreshCw className={cn("w-3.5 h-3.5 sm:w-4 sm:h-4", isLoading ? "animate-spin text-blue-400" : "")} />
-            </Button>
+        <div className="flex items-center gap-1 shrink-0">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleRefresh}
+            disabled={isLoading}
+            className="h-8 w-8 sm:h-9 sm:w-9 rounded-lg"
+          >
+            <RefreshCw
+              className={cn("w-3.5 h-3.5 sm:w-4 sm:h-4", isLoading ? "animate-spin" : "")}
+            />
+          </Button>
 
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="h-8 w-8 sm:h-9 sm:w-9 rounded-lg sm:rounded-xl bg-white/[0.02] border border-white/[0.04] hover:bg-white/[0.06] hover:border-white/[0.08] transition-all duration-200 text-slate-300 hover:text-white"
-            >
-              {theme === "dark" ? <Sun className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400" /> : <Moon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-indigo-400" />}
-            </Button>
-          </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            className="h-8 w-8 sm:h-9 sm:w-9 rounded-lg"
+          >
+            {theme === "dark" ? (
+              <Sun className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            ) : (
+              <Moon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            )}
+          </Button>
         </div>
       </header>
 
-      <main className="flex-1 relative z-10 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 space-y-4 sm:space-y-6">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3.5 border-b border-white/[0.04] pb-4 sm:pb-5">
-          <div className="space-y-0.5 sm:space-y-1">
-            <div className="flex items-center gap-1.5 text-blue-400/80 font-medium">
-              <LayoutDashboard className="w-3.5 h-3.5" />
-              <span className="text-[10px] uppercase tracking-widest font-bold">Intelligence Deck</span>
+      <main className="flex-1 relative z-10 w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-4 sm:space-y-6">
+        
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 sm:pb-0">
+          <div className="space-y-0.5">
+            <div className="flex items-center gap-1.5 text-muted-foreground">
+              <LayoutDashboard className="w-3.5 h-3.5 text-primary" />
+              <span className="text-[10px] uppercase tracking-widest font-bold label-meta">Weather Dashboard</span>
             </div>
-            <h1 className="text-xl sm:text-3xl font-black text-white tracking-tight">
-              Weather Analytics
+            <h1 className="text-xl sm:text-2xl font-black tracking-tight text-foreground">
+              Analytics Overview
             </h1>
           </div>
 
-          <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)} className="w-full md:w-auto">
-            <TabsList className="grid grid-cols-3 w-full md:w-[380px] p-0.5 sm:p-1 bg-white/[0.02] border border-white/[0.06] backdrop-blur-lg rounded-xl h-10 sm:h-11">
+          <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)} className="w-full sm:w-auto">
+            <TabsList 
+              className="grid grid-cols-3 w-full sm:w-[360px] p-1 text-xs rounded-xl h-10 sm:h-11" 
+              style={{ 
+                background: "var(--card)", 
+                backdropFilter: "blur(16px)", 
+                border: "1px solid var(--border)" 
+              }}
+            >
               <TabsTrigger 
-                value="overview" 
-                className="rounded-lg text-[11px] sm:text-xs font-bold tracking-wide transition-all py-1.5 sm:py-2 data-[state=active]:bg-gradient-to-b data-[state=active]:from-white/[0.08] data-[state=active]:to-white/[0.02] data-[state=active]:border-white/[0.12] data-[state=active]:text-white data-[state=active]:shadow-lg"
+                value="overview"
+                className="rounded-lg text-[11px] sm:text-xs font-bold tracking-wide transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md"
               >
                 Overview
               </TabsTrigger>
               <TabsTrigger 
-                value="forecast" 
-                className="rounded-lg text-[11px] sm:text-xs font-bold tracking-wide transition-all py-1.5 sm:py-2 data-[state=active]:bg-gradient-to-b data-[state=active]:from-white/[0.08] data-[state=active]:to-white/[0.02] data-[state=active]:border-white/[0.12] data-[state=active]:text-white data-[state=active]:shadow-lg"
+                value="forecast"
+                className="rounded-lg text-[11px] sm:text-xs font-bold tracking-wide transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md"
               >
                 Forecast
               </TabsTrigger>
               <TabsTrigger 
-                value="ai" 
-                className="rounded-lg text-[11px] sm:text-xs font-bold tracking-wide transition-all py-1.5 sm:py-2 data-[state=active]:bg-gradient-to-b data-[state=active]:from-white/[0.08] data-[state=active]:to-white/[0.02] data-[state=active]:border-white/[0.12] data-[state=active]:text-white data-[state=active]:shadow-lg"
+                value="ai"
+                className="rounded-lg text-[11px] sm:text-xs font-bold tracking-wide transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md"
               >
-                AI Insights
+                AI Prediction
               </TabsTrigger>
             </TabsList>
           </Tabs>
@@ -148,53 +175,76 @@ export function Dashboard() {
             <div className="space-y-4 sm:space-y-6">
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-5 items-start">
                 <div className="lg:col-span-1">
-                  <CurrentWeather data={weather.data} unit={unit} isLoading={isLoading} />
+                  <CurrentWeather
+                    data={weather.data}
+                    unit={unit}
+                    isLoading={isLoading}
+                  />
                 </div>
                 <div className="lg:col-span-2">
-                  <WeatherStats data={weather.data} unit={unit} isLoading={isLoading} />
+                  <WeatherStats
+                    data={weather.data}
+                    unit={unit}
+                    isLoading={isLoading}
+                  />
                 </div>
               </div>
-              <div className="bg-white/[0.02] border border-white/[0.06] rounded-xl sm:rounded-2xl p-3.5 sm:p-6 backdrop-blur-xl shadow-xl shadow-black/20 overflow-hidden">
-                <WeatherChart data={forecast.data?.hourly} unit={unit} isLoading={forecast.isLoading} />
+
+              <div className="p-3.5 sm:p-6 rounded-2xl border border-white/[0.04] bg-white/[0.01] backdrop-blur-xl shadow-xl shadow-black/[0.02] overflow-hidden">
+                <WeatherChart
+                  data={forecast.data?.hourly}
+                  unit={unit}
+                  isLoading={forecast.isLoading}
+                />
               </div>
             </div>
           )}
 
           {activeTab === "forecast" && (
             <div className="space-y-4 sm:space-y-6">
-              <div className="bg-white/[0.02] border border-white/[0.06] rounded-xl sm:rounded-2xl p-4 sm:p-6 backdrop-blur-xl shadow-xl shadow-black/20">
-                <div className="mb-4 sm:mb-6">
-                  <h3 className="text-sm sm:text-base font-bold text-white tracking-tight">5-Day Outlook</h3>
-                  <p className="text-[11px] sm:text-xs text-slate-400 mt-0.5">
-                    Extended visual analysis map for <span className="text-blue-400 font-semibold">{city}</span>
+              <div className="p-4 sm:p-6 rounded-2xl border border-white/[0.04] bg-white/[0.01] backdrop-blur-xl shadow-xl shadow-black/[0.02]">
+                <div className="mb-4">
+                  <h3 className="text-sm sm:text-base font-bold text-foreground tracking-tight">
+                    5-Day Forecast
+                  </h3>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Daily weather overview for{" "}
+                    <span className="text-foreground font-semibold">{city}</span>
                   </p>
                 </div>
-                <ForecastList days={forecast.data?.daily} unit={unit} isLoading={forecast.isLoading} />
+                <ForecastList
+                  days={forecast.data?.daily}
+                  unit={unit}
+                  isLoading={forecast.isLoading}
+                />
               </div>
-              <div className="bg-white/[0.02] border border-white/[0.06] rounded-xl sm:rounded-2xl p-3.5 sm:p-6 backdrop-blur-xl shadow-xl shadow-black/20 overflow-hidden">
-                <WeatherChart data={forecast.data?.hourly} unit={unit} isLoading={forecast.isLoading} />
+
+              <div className="p-3.5 sm:p-6 rounded-2xl border border-white/[0.04] bg-white/[0.01] backdrop-blur-xl shadow-xl shadow-black/[0.02] overflow-hidden">
+                <WeatherChart
+                  data={forecast.data?.hourly}
+                  unit={unit}
+                  isLoading={forecast.isLoading}
+                />
               </div>
             </div>
           )}
 
           {activeTab === "ai" && (
-            <div className="bg-white/[0.02] border border-white/[0.06] rounded-xl sm:rounded-2xl p-1 backdrop-blur-xl shadow-xl shadow-black/20 overflow-hidden">
-              <MLPrediction data={prediction.data} unit={unit} isLoading={prediction.isLoading} />
+            <div className="rounded-2xl border border-white/[0.04] bg-white/[0.01] backdrop-blur-xl shadow-xl shadow-black/[0.02] overflow-hidden">
+              <MLPrediction
+                data={prediction.data}
+                unit={unit}
+                isLoading={prediction.isLoading}
+              />
             </div>
           )}
         </div>
       </main>
 
-      <footer className="mt-auto border-t border-white/[0.06] bg-slate-950/60 backdrop-blur-md relative z-10">
-        <div className="max-w-7xl mx-auto px-4 py-3.5 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <p className="text-[10px] sm:text-[11px] font-medium text-slate-500 tracking-wider uppercase text-center sm:text-left">
-            © 2026 SkySense. Predictive Climate Framework.
-          </p>
-          <div className="flex items-center gap-3.5 text-[10px] sm:text-[11px] font-semibold text-slate-400">
-            <span className="hover:text-white cursor-pointer transition-colors">Terms</span>
-            <span className="hover:text-white cursor-pointer transition-colors">Privacy</span>
-          </div>
-        </div>
+      <footer className="mt-auto border-t py-3.5 px-4 sm:px-6" style={{ background: "var(--card)", backdropFilter: "blur(16px)", borderTop: "1px solid var(--border)" }}>
+        <p className="text-[10px] sm:text-xs text-muted-foreground text-center tracking-wide">
+          © 2026 SkySense. All rights reserved.
+        </p>
       </footer>
     </div>
   )
