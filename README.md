@@ -2,6 +2,9 @@
 
 <div align="center">
 
+  <a href="https://skysense-weather.vercel.app/">
+   <img src="https://img.shields.io/badge/Live_Demo-000000?style=plastic&logo=vercel&logoColor=white" alt="Live Demo" />
+  </a>
   <img src="https://img.shields.io/badge/React_18-20232A?style=plastic&logo=react&logoColor=61DAFB" alt="React 18">
   <img src="https://img.shields.io/badge/TypeScript-3178C6?style=plastic&logo=typescript&logoColor=white" alt="TypeScript" />
   <img src="https://img.shields.io/badge/TailwindCSS-38B2AC?style=plastic&logo=tailwind-css&logoColor=white" alt="TailwindCSS" />
